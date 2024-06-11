@@ -1,0 +1,53 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Dish {
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(cuid())
+  images      Image[]
+  name        String?
+  price       Float?
+  updatedAt   DateTime  @updatedAt
+  variants    Variant[]
+}
+
+model Variant {
+  createdAt   DateTime @default(now())
+  description String?
+  dish        Dish?    @relation(fields: [dishId], references: [id])
+  dishId      String?
+  id          String   @id @default(cuid())
+  name        String?
+  price       Float?
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  dish       Dish?      @relation(fields: [dishId], references: [id])
+  dishId     String?
+  id         String     @id @default(cuid())
+  updatedAt  DateTime   @updatedAt
+  url        String?
+}
+
+model Category {
+  createdAt   DateTime @default(now())
+  description String?
+  dishes      Dish[]
+  id          String   @id @default(cuid())
+  image       Image?   @relation(fields: [imageId], references: [id])
+  imageId     String?
+  name        String?
+  updatedAt   DateTime @updatedAt
+}
